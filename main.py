@@ -3,13 +3,17 @@ import os.path
 import re
 
 #Variables
-answer = ''
-item = ''
-quantity = 0
-index = 1
-is_match = False
-file_path = 'Grocery List.xlsx'
-difference = 1000
+answer        = ''
+item          = ''
+quantity      = 0
+index         = 1
+is_match      = False
+file_path     = 'Grocery List.xlsx'
+difference    = 1000
+inventory_col = 'A'
+quantity_col  = 'B'
+recipe_col    = 'D'
+reorder_col   = 'G'
 
 #Find the empty cell in the column
 def find_empty_cell(col_letter):
@@ -36,19 +40,16 @@ if os.path.exists(file_path):
 
     print('Would you like to add some items to your inventory?')
 
-    inventory_col = 'A'
-    quantity_col = 'B'
-    recipe_col = 'D'
-    reorder_col = 'G'
-
     while answer.capitalize() != 'N':
         answer = input('Enter Y for yes and N to continue: ')
+
         if answer.capitalize() == 'Y':
             print('Type in your items from your inventory and the quantity of items')
             print('If you are done adding items, type "stop" when in the item input.')
-            while item != 'stop':
 
+            while item != 'stop':
                 item = input('Add an item: ')
+
                 if item.lower() == 'stop' or item == '':
                     break
 
@@ -67,12 +68,12 @@ if os.path.exists(file_path):
         recipe = input('Enter recipe: ')
         if recipe == 'stop':
             break
-        matches = re.findall(r'(?<!\d)(\d+/\d+|\d+)(?!\d)', recipe)
-        quantity = [1 if '/' in match else int(match) for match in matches]
-        matches = re.findall(r'\b[a-zA-Z]+\b', recipe)
+        matches      = re.findall(r'(?<!\d)(\d+/\d+|\d+)(?!\d)', recipe)
+        quantity     = [1 if '/' in match else int(match) for match in matches]
+        matches      = re.findall(r'\b[a-zA-Z]+\b', recipe)
         common_words = set(['and', 'or', 'of', 'to', 'for', 'with', 'optional', 'use', 'peeled', 'deveined', 'pound', 'large', 'teaspoon', 'dried', 'teaspoons', 'serving', 'wedges', 'wedge', 'stop', 'leaves', 'fresh', 'chopped', 'juice', 'minced', 'crushed', 'cup', 'cups', 'divided', 'melted'])
-        recipe = [match for match in matches if match.lower() not in common_words]
-        recipe_str = ' '.join(recipe)
+        recipe       = [match for match in matches if match.lower() not in common_words]
+        recipe_str   = ' '.join(recipe)
 
         if not quantity:
             quantity.append(1)
@@ -85,18 +86,19 @@ if os.path.exists(file_path):
                     flag = True
                     break
                 index += 1
+
             if flag == False:
                 ws[f"{recipe_col}{ws.max_row+1}"] = recipe_str
                 ws[f"E{ws.max_row}"] = ', '.join(map(str, quantity))
+
             flag = False
 
 
-    inv_col_str = ''
-    recipe_col_str = ''
-
-    starting_index = find_empty_cell(inventory_col)
-    inv_col_index = 2
-    recipe_col_index = 1
+    inv_col_str       = ''
+    recipe_col_str    = ''
+    starting_index    = find_empty_cell(inventory_col)
+    inv_col_index     = 2
+    recipe_col_index  = 1
     reorder_col_index = 2
 
     #Loop through recipe item list
@@ -127,8 +129,8 @@ if os.path.exists(file_path):
 
 
 
-    inv_col_index = 2
-    recipe_col_index = 2
+    inv_col_index     = 2
+    recipe_col_index  = 2
     reorder_col_index = 2
 
 
